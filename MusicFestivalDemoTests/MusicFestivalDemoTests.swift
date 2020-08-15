@@ -11,7 +11,7 @@ import XCTest
 class MusicFestivalDemoTests: XCTestCase {
     
     func testIndexOfStringInArray() {
-        let vc = ViewController()
+        let commomMethods = CommomMethods()
         let dataArray = NSMutableArray();
         
         var musicFestivalInstance1 = Bands.bands();
@@ -25,7 +25,7 @@ class MusicFestivalDemoTests: XCTestCase {
         musicFestivalInstance2.expandCollapseAllowed = true ;
         dataArray.add(musicFestivalInstance1)
         dataArray.add(musicFestivalInstance2)
-        let index = vc.find(value: "test", in: dataArray as! [Bands.bands])
+        let index = commomMethods.find(value: "test", in: dataArray as! [Bands.bands])
         XCTAssertEqual(index, 1, "index should be 1")
     }
     
@@ -44,20 +44,20 @@ class MusicFestivalDemoTests: XCTestCase {
     }
     
     func testRemovalOfEmptyStringInArray() {
-       let vc = ViewController()
-       let dataArray = ["","testData1","testData2"];
-       let expectedArrayValue = ["testData1","testData2"];
-       
-       let expectedArray =  vc.removeEmptyStringFromArray(arrayToCheck: dataArray as NSArray)
+        let commomMethods = CommomMethods()
+        let dataArray = ["","testData1","testData2"];
+        let expectedArrayValue = ["testData1","testData2"];
+        
+        let expectedArray =  commomMethods.removeEmptyStringFromArray(arrayToCheck: dataArray as NSArray)
         XCTAssertEqual(expectedArray as NSArray, expectedArrayValue as NSArray, "Function not working")
     }
     
     func testAlphabaticOrderingOfArray() {
-       let vc = ViewController()
-       let dataArray = ["B","A","D","c"];
-       let expectedArrayValue = ["A","B","c","D"];
-       let expectedArray =  vc.sortedStringArrayAlphabatically(arrayToSort: dataArray as NSArray)
-       XCTAssertEqual(expectedArray as NSArray, expectedArrayValue as NSArray, "Function not working")
+        let commomMethods = CommomMethods()
+        let dataArray = ["B","A","D","c"];
+        let expectedArrayValue = ["A","B","c","D"];
+        let expectedArray =  commomMethods.sortedStringArrayAlphabatically(arrayToSort: dataArray as NSArray)
+        XCTAssertEqual(expectedArray as NSArray, expectedArrayValue as NSArray, "Function not working")
     }
     
     

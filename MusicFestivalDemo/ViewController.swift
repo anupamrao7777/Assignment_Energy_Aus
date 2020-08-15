@@ -16,6 +16,7 @@ class ViewController: UIViewController {
     let bandDictionary = NSMutableDictionary();
     var recordLevelArray = [Any]()
     var counter = 0
+    let commonMethods = CommomMethods()
     struct MusicFestival :  Codable {
         var name: String?
         var bands: [Bands2]?
@@ -131,15 +132,15 @@ class ViewController: UIViewController {
                 }
             }
         }
-            
+          // Error handling
         catch {
             DispatchQueue.main.async {
                 self.showAlertWith(title: ConstantValues.Constants.parsingErrorTitle ,message: error.localizedDescription)
             }
         }
         let array = self.recordLabelDictionary.allKeys as NSArray
-        let recordLevelArrayWithoutEmptyString = self.removeEmptyStringFromArray(arrayToCheck: array)
-        self.recordLevelArray =   self.sortedStringArrayAlphabatically(arrayToSort:recordLevelArrayWithoutEmptyString as NSArray  )
+        let recordLevelArrayWithoutEmptyString = commonMethods.removeEmptyStringFromArray(arrayToCheck: array)
+        self.recordLevelArray = commonMethods.sortedStringArrayAlphabatically(arrayToSort:recordLevelArrayWithoutEmptyString as NSArray  )
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
@@ -154,16 +155,7 @@ class ViewController: UIViewController {
         present(alertController, animated: true, completion: nil)
     }
     
-    func sortedStringArrayAlphabatically(arrayToSort : NSArray) ->[Any] {
-        let sortedArray = arrayToSort.sorted { ((($0) as AnyObject).localizedCaseInsensitiveCompare($1 as! String) == ComparisonResult.orderedAscending) }
-        return sortedArray ;
-    }
     
-    func removeEmptyStringFromArray(arrayToCheck : NSArray) -> [Any] {
-           let predicate = NSPredicate(format: "length > 0")
-           return arrayToCheck.filtered(using: predicate)
-           
-       }
     
      // MARK: Setup and reload tableview
     
@@ -257,7 +249,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
         if  ((bandVar?.selectedState ) == true) {
             if counter == 1 {
                 self.bringDataToAllCollapsedState()
-                let index = self.find(value: (bandVar?.bandNmae)!, in: tableDataArray as! [Bands.bands])
+                let index = commonMethods.find(value: (bandVar?.bandNmae)!, in: tableDataArray as! [Bands.bands])
                 var bandVar =  self.tableDataArray[index!] as? Bands.bands
                 bandVar?.selectedState = false
                 tableDataArray.replaceObject(at: index!, with: bandVar as Any)
@@ -272,7 +264,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
         } else {
             if counter == 1 {
                 self.bringDataToAllCollapsedState()
-                let index = self.find(value: (bandVar?.bandNmae)!, in: tableDataArray as! [Bands.bands])
+                let index = commonMethods.find(value: (bandVar?.bandNmae)!, in: tableDataArray as! [Bands.bands])
                 var bandVar =  self.tableDataArray[index!] as? Bands.bands
                 bandVar?.selectedState = true
                 let localArr =  bandVar?.festivalArray
@@ -305,28 +297,11 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     // MARK: Some Convenience methods
     
     /**
-     Finds the index of a string in array
-    - Parameter : searchValuey - The string to be searched
-               array - the array in which string is to be searched
-    - Returns: the index of string in array``
-    */
-    func find(value searchValue: String, in array: [Bands.bands]) -> Int?
-    {
-        for (index, value) in array.enumerated()
-        {
-            if value.bandNmae == searchValue {
-                return index
-            }
-        }
-        return nil
-    }
-    /**
       Creates the band data array from given array
     - Parameter bandArray: The original array
     */
     func createBandData(bandArray: NSArray) -> Void{
         tableDataArray.removeAllObjects()
-        // originalDataArray.removeAllObjects()
         for data in bandArray {
             var photoInstance = Bands.bands();
             photoInstance.bandNmae = (data as! String)
