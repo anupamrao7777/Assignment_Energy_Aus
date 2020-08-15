@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="SA6-Wa-GbB">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="8GY-1Q-LOJ">
+            <objects>
+                <viewController id="SA6-Wa-GbB" customClass="ViewController" customModule="MusicFestivalDemo" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="EmQ-EG-xGk">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="mlE-gm-cwW" customClass="CollapseTableView" customModule="CollapseTableView">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="blue" indentationWidth="10" reuseIdentifier="customCell" editingAccessoryType="disclosureIndicator" id="KXn-bp-oiK" customClass="customTableViewCell" customModule="MusicFestivalDemo">
+                                        <rect key="frame" x="0.0" y="28" width="375" height="43.5"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="KXn-bp-oiK" id="ACh-8J-1QC">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="whiteClose" translatesAutoresizingMaskIntoConstraints="NO" id="VO8-WQ-Moz">
+                                                    <rect key="frame" x="327" y="10" width="33" height="23"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Wi-e9-Bcz">
+                                                    <rect key="frame" x="22" y="4" width="279" height="34"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="bandLabel" destination="4Wi-e9-Bcz" id="Qbb-Yg-6lR"/>
+                                            <outlet property="expandCollapseImageView" destination="VO8-WQ-Moz" id="fLM-pi-q1G"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="tsZ-KP-nHI" firstAttribute="trailing" secondItem="mlE-gm-cwW" secondAttribute="trailing" id="Enb-Jv-DVp"/>
+                            <constraint firstItem="mlE-gm-cwW" firstAttribute="leading" secondItem="tsZ-KP-nHI" secondAttribute="leading" id="JFZ-1t-DnH"/>
+                            <constraint firstItem="mlE-gm-cwW" firstAttribute="top" secondItem="tsZ-KP-nHI" secondAttribute="top" id="gRV-ls-Vm8"/>
+                            <constraint firstItem="tsZ-KP-nHI" firstAttribute="bottom" secondItem="mlE-gm-cwW" secondAttribute="bottom" id="zQf-8n-K1W"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="tsZ-KP-nHI"/>
+                    </view>
+                    <connections>
+                        <outlet property="tableView" destination="mlE-gm-cwW" id="tLN-WT-mJl"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ilB-Oh-cje" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="140" y="100.29985007496252"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="whiteClose" width="320" height="320"/>
+    </resources>
+</document>
