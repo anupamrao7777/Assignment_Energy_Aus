@@ -12,19 +12,12 @@ class ViewController: UIViewController {
     @IBOutlet weak var tableView: CollapseTableView!
     var reachability: Reachability!
     var tableDataArray = NSMutableArray();
-    let recordLabelDictionary = NSMutableDictionary();
-    let bandDictionary = NSMutableDictionary();
+    var recordLabelDictionary = NSMutableDictionary();
+    var bandDictionary = NSMutableDictionary();
     var recordLevelArray = [Any]()
     var counter = 0
     let commonMethods = CommomMethods()
-    struct MusicFestival :  Codable {
-        var name: String?
-        var bands: [Bands2]?
-    }
-    struct Bands2 :  Codable {
-        var name: String?
-        var recordLabel: String?
-    }
+    let serviceCall = ServiceCall()
     
     // MARK: View life cycle methods
     
@@ -39,8 +32,8 @@ class ViewController: UIViewController {
                     self.fetchAndParseData()
                 }
             } else {
-                self.showAlertWith(title: ConstantValues.Constants.noInternetConnectivityTitle,
-                                   message: ConstantValues.Constants.noInternetConnectivityMessage)
+                commonMethods.showAlertWith(title: ConstantValues.Constants.noInternetConnectivityTitle,
+                                            message: ConstantValues.Constants.noInternetConnectivityMessage)
             }
         } catch {
             print(ConstantValues.Constants.reachabilitIssue)
@@ -53,111 +46,37 @@ class ViewController: UIViewController {
         tableView.didTapSectionHeaderView = { (sectionIndex, isOpen) in
             debugPrint("sectionIndex \(sectionIndex), isOpen \(isOpen) and object is \(self.recordLevelArray[sectionIndex]))" )
             self.createBandData(bandArray:self.recordLabelDictionary.object(forKey: self.recordLevelArray[sectionIndex] ) as! NSArray)
-            self.tableView.reloadData()
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
             
         }
         
     }
     
-     // MARK: Fetch and parsing data
+    // MARK: Fetch and parsing data
     
     func fetchAndParseData() -> Void {
         let urlString = ConstantValues.Constants.Music_Festival_Url
-        self.loadJson(fromURLString: urlString) { (result) in
+        serviceCall.loadJson(fromURLString: urlString) { (result) in
             switch result {
             case .success(let data):
-                self.parse(jsonData: data)
+                (self.recordLabelDictionary , self.bandDictionary ,self.recordLevelArray) =  self.commonMethods.parse(jsonData: data)
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
             case .failure(let error):
-                print(error)
+                DispatchQueue.main.async {
+                    self.commonMethods.showAlertWith(title: ConstantValues.Constants.serverError,
+                                                     message: error.localizedDescription)
+                }
+                
             }
         }
         
     }
     
-    private func loadJson(fromURLString urlString: String,
-                          completion: @escaping (Result<Data, Error>) -> Void) {
-        if let url = URL(string: urlString) {
-            let urlSession = URLSession(configuration: .default).dataTask(with: url) { (data, response, error) in
-                if let error = error {
-                    completion(.failure(error))
-                }
-                if let data = data {
-                    completion(.success(data))
-                }
-            }
-            urlSession.resume()
-        }
-    }
-    
-    private func parse(jsonData: Data) {
-        do {
-            let decodedData = try JSONDecoder().decode([MusicFestival].self,
-                                                       from: jsonData)
-            if decodedData.count == 0 {
-                return;
-            }
-            for item in decodedData {
-                let bandData = item.bands
-                for bands in 0..<(bandData!.count) {
-                    let recordLevel = bandData![bands].recordLabel ?? nil
-                    if ((recordLevel != nil) && recordLabelDictionary[recordLevel as Any] != nil ){
-                        let modifyingArray = recordLabelDictionary.value(forKey: recordLevel ?? "") as! NSMutableArray;
-                        modifyingArray.add(bandData![bands].name!)
-                        recordLabelDictionary.setValue(modifyingArray, forKey:recordLevel ?? "")
-                        let bandName = bandData![bands].name!
-                        if bandDictionary[bandName] != nil && recordLabelDictionary.value(forKey: bandName) != nil{
-                            
-                            let modifyingArray = recordLabelDictionary.value(forKey: bandName) as! NSMutableArray;
-                            modifyingArray.add(item.name!)
-                            bandDictionary.setValue(modifyingArray, forKey:bandName)
-                        }
-                    } else {
-                        let bandArray = NSMutableArray()
-                        var musicalFestivalArray = NSMutableArray()
-                        
-                        if  (bandDictionary[bandData![bands].name as Any] != nil){
-                            musicalFestivalArray = bandDictionary.value(forKey:bandData![bands].name ?? "") as! NSMutableArray;
-                        }
-                        if (item.name != nil) {
-                            musicalFestivalArray.add(item.name!)
-                        }
-                        
-                        bandDictionary.setValue(musicalFestivalArray, forKey:bandData![bands].name!)
-                        bandArray.add(bandData![bands].name!);
-                        if (recordLevel != nil) {
-                            recordLabelDictionary.setValue(bandArray, forKey:recordLevel ?? "")
-                        }
-                        
-                    }
-                }
-            }
-        }
-          // Error handling
-        catch {
-            DispatchQueue.main.async {
-                self.showAlertWith(title: ConstantValues.Constants.parsingErrorTitle ,message: error.localizedDescription)
-            }
-        }
-        let array = self.recordLabelDictionary.allKeys as NSArray
-        let recordLevelArrayWithoutEmptyString = commonMethods.removeEmptyStringFromArray(arrayToCheck: array)
-        self.recordLevelArray = commonMethods.sortedStringArrayAlphabatically(arrayToSort:recordLevelArrayWithoutEmptyString as NSArray  )
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
-    }
-    
-    
-     // MARK: Some Convenience methods
-    
-    func showAlertWith(title : String , message : String) -> Void {
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alertController.addAction(UIAlertAction(title: ConstantValues.Constants.alertButtonOk, style: .cancel, handler: nil))
-        present(alertController, animated: true, completion: nil)
-    }
-    
-    
-    
-     // MARK: Setup and reload tableview
+    // MARK: Setup and reload tableview
     
     func setupTableView() {
         tableView.delegate = self
@@ -165,25 +84,11 @@ class ViewController: UIViewController {
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.register(UINib(nibName: SectionHeaderView.reuseIdentifier, bundle: nil), forHeaderFooterViewReuseIdentifier: SectionHeaderView.reuseIdentifier)
     }
-    
-    func reloadTableView(_ completion: @escaping () -> Void) {
-        CATransaction.begin()
-        CATransaction.setCompletionBlock({
-            completion()
-        })
-        tableView.reloadData()
-        CATransaction.commit()
-    }
-    
-   
 }
-
-
-
 
 extension ViewController: UITableViewDataSource, UITableViewDelegate {
     
-     // MARK: Tableview data source and delegates
+    // MARK: Tableview data source and delegates
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tableDataArray.count
@@ -292,14 +197,16 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
                 }
             }
         }
-        self.tableView.reloadData()
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
     // MARK: Some Convenience methods
     
     /**
-      Creates the band data array from given array
-    - Parameter bandArray: The original array
-    */
+     Creates the band data array from given array
+     - Parameter bandArray: The original array
+     */
     func createBandData(bandArray: NSArray) -> Void{
         tableDataArray.removeAllObjects()
         for data in bandArray {
@@ -321,8 +228,8 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     /**
-    Reset data to collapsed state
-    */
+     Reset data to collapsed state
+     */
     
     func bringDataToAllCollapsedState() -> Void {
         let locaArray = NSMutableArray();

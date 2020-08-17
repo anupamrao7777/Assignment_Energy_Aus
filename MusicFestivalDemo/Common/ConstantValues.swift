@@ -19,5 +19,6 @@ class ConstantValues : NSObject{
         static let parsingErrorTitle = "Data not correct!"
         static let reachabilitIssue  = "Reachability is not working."
         static let alertButtonOk  = "OK"
+        static let serverError = "Server error !"
     }
 }
